@@ -14,13 +14,11 @@ wd_url="http://user:pass@host:4444/wd/hub"
 base_url='https://www.saucelabs.com'
 puts "starting browser for cap #{caps.to_json}"
 driver = Selenium::WebDriver.for(:remote, url: wd_url, desired_capabilities: caps)
-driver.logger.level = :debug
-driver.logger.output = 'selenium.log'
 driver.manage.timeouts.implicit_wait = 10
 driver.get("#{base_url}/test-guinea-pig.html")
 to_type = '0 1 2 3 4 5 6 7 8 9 '\
           'a b c d e f g h j k l m n o p q r s t u v w x y z'
 textarea = driver.find_element(:id, 'comments')
 textarea.send_keys(to_type)
-puts "Test #{driver.id}completed"
+puts "Test completed"
 driver.quit()
