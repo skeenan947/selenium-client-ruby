@@ -1,6 +1,11 @@
 FROM ruby:2-alpine
 
-RUN apk add --update ruby-dev build-base && gem install selenium-webdriver && apk del ruby-dev build-base
-ADD setest.rb .
+ADD Gemfile /root/
+WORKDIR /root
+RUN apk add --update ruby-dev build-base bash vim ruby-ffi && \
+    gem install bundler && \
+    bundle install && \
+    apk del ruby-dev build-base
 
-CMD /bin/sh
+ADD setest .
+ENTRYPOINT ["bundle","exec","setest"]
