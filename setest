@@ -2,29 +2,31 @@
 require 'selenium-webdriver'
 require 'thor'
 
-
 class TestRunnerCLI < Thor
-  default_task :start
-  desc "start", "Run test suite"
-  option :host, :required => true
-  option :user, :required => true
-  option :key, :required => true
-  option :browser, :default => 'chrome'
-  option :version, :default => '60'
-  option :container, :default => true
-  option :video, :type => :boolean, :default => true
-  option :screenshot, :type => :boolean, :default => true
+  desc "test", "Run test suite"
+  method_option :host, :aliases => '-h', :required => true, :desc => "Remote WD host"
+  method_option :user, :aliases => '-u', :required => true, :desc => "API user"
+  method_option :key, :aliases => '-k', :required => true, :desc => "API Key"
+  method_option :port, :aliases => '-p', :default => '4444', :desc => "Remote WD port (default 4444)"
+  method_option :browser, :aliases => '-b', :desc => "Browser to launch", :default => 'chrome'
+  method_option :version, :aliases => '-v', :desc => "Browser version to use", :default => '60'
+  method_option :container, :aliases => '-c', :type => :boolean, :default => false
+  method_option :video, :type => :boolean, :default => true
+  method_option :screenshot, :type => :boolean, :default => true
   
-  def start()
+  def test
     caps = {
       browserName: options[:browser],
+      version: options[:version],
       seleniumVersion: '3.4.0',
       _containerizedChef: options[:container],
       recordVideo: options[:video],
       recordScreenshots: options[:screenshot]
     }
+    puts "Running test with options: #{options.to_s} and caps #{caps}"
 
-    wd_url="http://#{options[:user]}:#{options[:key]}@#{options[:host]}:4444/wd/hub"
+    wd_url="http://#{options[:user]}:#{options[:key]}@#{options[:host]}:#{options[:port]}/wd/hub"
+    puts "wd_url: #{wd_url}"
     base_url='https://www.saucelabs.com'
     puts "starting browser for cap #{caps.to_json}"
     driver = Selenium::WebDriver.for(:remote, url: wd_url, desired_capabilities: caps)
@@ -37,6 +39,7 @@ class TestRunnerCLI < Thor
     puts "Test completed"
     driver.quit()
   end
+  default_task :test
 end
 
 TestRunnerCLI.start(ARGV)

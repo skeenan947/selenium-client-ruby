@@ -9,4 +9,4 @@ RUN apk add --update ruby-dev build-base bash vim ruby-ffi && \
     rm -rf /var/cache/apk/*
 
 ADD setest .
-ENTRYPOINT ["bundle","exec","setest"]
+ENTRYPOINT ["bundle","exec","setest","test"]
