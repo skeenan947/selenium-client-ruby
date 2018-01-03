@@ -9,11 +9,11 @@ class TestRunnerCLI < Thor
   option :host, :required => true
   option :user, :required => true
   option :key, :required => true
-  option :browser => 'chrome'
-  option :version => '60'
-  option :container => true
-  option :video => true
-  option :screenshot => true
+  option :browser, :default => 'chrome'
+  option :version, :default => '60'
+  option :container, :default => true
+  option :video, :type => :boolean, :default => true
+  option :screenshot, :type => :boolean, :default => true
   
   def start()
     caps = {
