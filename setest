@@ -8,17 +8,22 @@ class TestRunnerCLI < Thor
   method_option :user, :aliases => '-u', :required => true, :desc => "API user"
   method_option :key, :aliases => '-k', :required => true, :desc => "API Key"
   method_option :port, :aliases => '-p', :default => '4444', :desc => "Remote WD port (default 4444)"
+  method_option :platform, :desc => "OS to launch", :default => 'Linux'
   method_option :browser, :aliases => '-b', :desc => "Browser to launch", :default => 'chrome'
   method_option :version, :aliases => '-v', :desc => "Browser version to use", :default => '60'
+  method_option :selenium, :aliases => '-s', :desc => "Selenium version", :default => ''
+  method_option :chromedriver, :desc => "Chromedriver version", :default => ''
   method_option :container, :aliases => '-c', :type => :boolean, :default => false
   method_option :video, :type => :boolean, :default => true
   method_option :screenshot, :type => :boolean, :default => true
-  
+
   def test
     caps = {
+      platform: options[:platform],
       browserName: options[:browser],
       version: options[:version],
-      seleniumVersion: '3.4.0',
+      seleniumVersion: options[:selenium],
+      chromedriverVersion: options[:chromedriver],
       _containerizedChef: options[:container],
       recordVideo: options[:video],
       recordScreenshots: options[:screenshot]
@@ -36,7 +41,11 @@ class TestRunnerCLI < Thor
               'a b c d e f g h j k l m n o p q r s t u v w x y z'
     textarea = driver.find_element(:id, 'comments')
     textarea.send_keys(to_type)
-    puts "Test completed"
+    if driver.title != 'I am a page title - Sauce Labs'
+      puts "ERROR: Page had wrong title: #{driver.title}"
+      exit(1)
+    end
+    puts "\nTest completed"
     driver.quit()
   end
   default_task :test
